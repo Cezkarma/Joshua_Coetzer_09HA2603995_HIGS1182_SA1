@@ -7,12 +7,16 @@ public class DifficultyManager : MonoBehaviour
     [SerializeField] private CollectibleManager collectibleManager;
     [SerializeField] private EnemySpawner enemySpawner;
     [SerializeField] private AsteroidSpawner asteroidSpawner;
+    [Tooltip("Optional. Spawns power-up pickups at the start of each wave.")]
+    [SerializeField] private PowerUpManager powerUpManager;
     [Tooltip("Optional. Shows the current wave for the whole run.")]
     [SerializeField] private TMP_Text waveText;
 
     [Header("Wave 1")]
     [SerializeField] private int startingScrap = 10;
     [SerializeField] private int startingEnemies = 2;
+    [Tooltip("Power-up pickups placed at the start of every wave.")]
+    [SerializeField] private int powerUpsPerWave = 1;
 
     [Header("Added Each Wave")]
     [SerializeField] private int extraScrapPerWave = 2;
@@ -83,6 +87,11 @@ public class DifficultyManager : MonoBehaviour
 
         collectibleManager.SpawnScrap(scrapCount);
         enemySpawner.SpawnEnemies(enemyCount);
+
+        if (powerUpManager != null)
+        {
+            powerUpManager.SpawnPowerUps(powerUpsPerWave);
+        }
 
         if (waveText != null)
         {

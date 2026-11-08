@@ -2,21 +2,22 @@ using UnityEngine;
 
 public class PlayerShooting : MonoBehaviour
 {
+    [Tooltip("The laser prefab fired from the ship. Needs a Projectile component.")]
+    [SerializeField] private Projectile laserPrefab;
     [Tooltip("Where shots start from. Left empty, the child named ShootingPoint is used.")]
     [SerializeField] private Transform shootingPoint;
     [Tooltip("How far a shot reaches, in world units.")]
     [SerializeField] private float range = 400f;
     [Tooltip("How far down the camera's line of sight aiming starts, so the ship's own hull is never read as the target.")]
     [SerializeField] private float shipClearance = 15f;
+    [Tooltip("When nothing is under the crosshair, lasers aim at the point this far down the camera's line of sight. " +
+             "Lower values make the beam rise to meet the crosshair sooner; higher values keep it lower for longer.")]
+    [SerializeField] private float convergenceDistance = 60f;
 
     [Header("Damage")]
     [Tooltip("Layers a shot can hit. Set this to Asteroid and Enemy.")]
     [SerializeField] private LayerMask targetLayers = ~0;
     [SerializeField] private int damage = 1;
-
-    [Header("Feedback")]
-    [SerializeField] private Color hitColour = new Color(1f, 0.3f, 0.2f);
-    [SerializeField] private float hitBurstSize = 1.5f;
 
     private Camera cam;
 
@@ -32,9 +33,9 @@ public class PlayerShooting : MonoBehaviour
     {
         cam = Camera.main;
 
-        if (cam == null || shootingPoint == null)
+        if (cam == null || shootingPoint == null || laserPrefab == null)
         {
-            Debug.LogWarning("PlayerShooting: needs a camera tagged MainCamera and a ShootingPoint, so shooting is disabled.", this);
+            Debug.LogWarning("PlayerShooting: needs a camera tagged MainCamera, a ShootingPoint and a laser prefab, so shooting is disabled.", this);
             enabled = false;
         }
     }
@@ -54,33 +55,15 @@ public class PlayerShooting : MonoBehaviour
 
         Debug.DrawRay(origin, direction * range, Color.red, 0.2f);
 
-        if (Raycast(new Ray(origin, direction), out RaycastHit hit))
-        {
-            ApplyDamage(hit);
-        }
+        FireLaser(origin, direction);
     }
 
-    private void ApplyDamage(RaycastHit hit)
+    private void FireLaser(Vector3 origin, Vector3 direction)
     {
-        GameObject target = hit.rigidbody != null ? hit.rigidbody.gameObject : hit.collider.gameObject;
+        Projectile laser = Instantiate(laserPrefab, origin, Quaternion.LookRotation(direction));
+        laser.Launch(direction, range, damage, targetLayers);
 
-        if (!target.CompareTag(GameTags.Asteroid) && !target.CompareTag(GameTags.Enemy))
-        {
-            return;
-        }
-
-        Health health = target.GetComponent<Health>();
-        if (health == null)
-        {
-            Debug.LogWarning($"PlayerShooting: {target.name} is tagged {target.tag} but has no Health component.", target);
-            return;
-        }
-
-        Debug.Log($"Shot hit {target.tag}: {target.name}.");
-        health.ApplyDamage(damage);
-
-        Effects.SpawnBurst(hit.point, hitBurstSize, hitColour);
-        HUDManager.ShowMessage(health.IsDead ? $"{target.tag} destroyed" : $"{target.tag} hit ({health.CurrentHealth}/{health.MaxHealth})", hitColour);
+        Debug.Log("Laser fired.");
     }
 
     private Vector3 GetAimPoint()
@@ -88,11 +71,7 @@ public class PlayerShooting : MonoBehaviour
         Ray aim = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
         aim.origin = aim.GetPoint(shipClearance);
 
-        return Raycast(aim, out RaycastHit hit) ? hit.point : aim.GetPoint(range);
-    }
-
-    private bool Raycast(Ray ray, out RaycastHit hit)
-    {
-        return Physics.Raycast(ray, out hit, range, targetLayers, QueryTriggerInteraction.Ignore);
+        // On a miss, aim at a nearer point so the beam lines up with the crosshair sooner.
+        return Physics.Raycast(aim, out RaycastHit hit, range, targetLayers, QueryTriggerInteraction.Ignore) ? hit.point : aim.GetPoint(convergenceDistance);
     }
 }

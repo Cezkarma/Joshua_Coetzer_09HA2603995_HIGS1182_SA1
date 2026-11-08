@@ -163,11 +163,11 @@ public class PlayerController : MonoBehaviour
 
         if (other.CompareTag(GameTags.Asteroid))
         {
-            Die("Hit by an asteroid");
+            HandleObstacleHit(other, "Hit by an asteroid");
         }
         else if (other.CompareTag(GameTags.Enemy))
         {
-            Die("Destroyed by an enemy drone");
+            HandleObstacleHit(other, "Destroyed by an enemy drone");
         }
     }
 
@@ -177,6 +177,28 @@ public class PlayerController : MonoBehaviour
         {
             scrap.Collect();
         }
+        else if (other.TryGetComponent(out PowerUpPickup powerUp))
+        {
+            powerUp.Collect();
+        }
+    }
+
+    private void HandleObstacleHit(GameObject obstacle, string cause)
+    {
+        if (PowerUpManager.TryAbsorbHit())
+        {
+            // Destroy whatever hit the shield so it can't immediately hit the unprotected ship.
+            Debug.Log($"Shield saved the player: {cause}.");
+
+            if (obstacle.TryGetComponent(out Health obstacleHealth))
+            {
+                obstacleHealth.Kill();
+            }
+
+            return;
+        }
+
+        Die(cause);
     }
 
     private void Die(string cause)

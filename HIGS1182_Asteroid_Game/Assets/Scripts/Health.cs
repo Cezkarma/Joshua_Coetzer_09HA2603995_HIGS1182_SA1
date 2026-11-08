@@ -52,6 +52,11 @@ public class Health : MonoBehaviour
         }
     }
 
+    public void Kill()
+    {
+        ApplyDamage(CurrentHealth);
+    }
+
     private void Die()
     {
         Debug.Log($"{name} destroyed.");

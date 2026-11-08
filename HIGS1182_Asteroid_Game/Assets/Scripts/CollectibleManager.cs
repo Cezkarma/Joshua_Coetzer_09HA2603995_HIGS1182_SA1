@@ -10,6 +10,8 @@ public class CollectibleManager : MonoBehaviour
     [Header("UI")]
     [Tooltip("Shows the score and how much scrap is left in this wave.")]
     [SerializeField] private TMP_Text scoreText;
+    [Tooltip("Optional. Shows the high score to beat, updating live once it is beaten.")]
+    [SerializeField] private TMP_Text highScoreText;
 
     [Header("Placement")]
     [Tooltip("Who to scatter the scrap around. Leave empty to use this object's position.")]
@@ -27,9 +29,12 @@ public class CollectibleManager : MonoBehaviour
 
     private int score;
     private int remaining;
+    private int savedHighScore;
 
     private void Awake()
     {
+        savedHighScore = SaveManager.LoadHighScore();
+
         GameManager.ReportScore(score);
         RefreshScoreText();
 
@@ -83,12 +88,16 @@ public class CollectibleManager : MonoBehaviour
 
     private void RefreshScoreText()
     {
-        if (scoreText == null)
+        if (scoreText != null)
         {
-            return;
+            scoreText.text = $"Scrap: {score}  ({remaining} left)";
         }
 
-        scoreText.text = $"Scrap: {score}  ({remaining} left)";
+        // Saving still happens once at game over; this only previews the new record.
+        if (highScoreText != null)
+        {
+            highScoreText.text = score > savedHighScore ? $"High Score: {score} (New!)" : $"High Score: {savedHighScore}";
+        }
     }
 }
 

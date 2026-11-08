@@ -67,6 +67,12 @@ public class GameManager : MonoBehaviour
 
     public void PlayGame() => LoadScene("MainScene");
 
+    public void RestartGame()
+    {
+        Debug.Log($"Restarting game. Last run: {score} scrap, wave {wave}.");
+        PlayGame();
+    }
+
     public void ShowHowToPlay() => LoadScene("HowToPlayScene");
 
     public void ShowMainMenu() => LoadScene("MainMenuScene");

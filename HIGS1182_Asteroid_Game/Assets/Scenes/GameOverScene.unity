@@ -725,7 +725,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1421398942}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: PlayGame
+        m_MethodName: RestartGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1182,6 +1182,7 @@ MonoBehaviour:
   outcomeText: {fileID: 1907774593}
   amountCollectedText: {fileID: 1821732915}
   highScoreText: {fileID: 1944882075}
+  volumeSlider: {fileID: 0}
 --- !u!1 &1821732913
 GameObject:
   m_ObjectHideFlags: 0

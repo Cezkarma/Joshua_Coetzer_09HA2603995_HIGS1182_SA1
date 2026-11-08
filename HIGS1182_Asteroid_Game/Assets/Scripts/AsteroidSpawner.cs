@@ -50,5 +50,7 @@ public class AsteroidSpawner : MonoBehaviour
         Instantiate(asteroidPrefab, centre + offset, Random.rotation)
             .GetComponent<Asteroid>()
             .Launch(heading);
+
+        Debug.Log("Asteroid Spawned");
     }
 }

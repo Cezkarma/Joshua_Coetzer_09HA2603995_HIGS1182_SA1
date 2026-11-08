@@ -72,6 +72,7 @@ public class CollectibleManager : MonoBehaviour
 
         Effects.SpawnBurst(position, pickupBurstSize, pickupColour);
         HUDManager.ShowMessage("+1 Scrap", pickupColour);
+        AudioManager.PlaySound(SoundNames.Pickup);
 
         if (remaining <= 0)
         {

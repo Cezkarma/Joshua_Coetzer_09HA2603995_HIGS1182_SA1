@@ -62,6 +62,7 @@ public class Health : MonoBehaviour
         Debug.Log($"{name} destroyed.");
 
         Effects.SpawnBurst(transform.position, deathBurstSize, deathBurstColour);
+        AudioManager.PlaySound(SoundNames.Explosion);
         Destroy(gameObject);
     }
 

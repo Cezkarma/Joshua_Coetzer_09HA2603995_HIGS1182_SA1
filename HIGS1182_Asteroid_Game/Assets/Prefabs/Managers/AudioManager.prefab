@@ -1,0 +1,94 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2272931583053444058
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3557691525385047674}
+  - component: {fileID: 84318613845891273}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3557691525385047674
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2272931583053444058}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 287.80817, y: 528.24695, z: 23.073767}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &84318613845891273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2272931583053444058}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3693684e861f79b478f58914db6591b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sounds:
+  - name: Music
+    clip: {fileID: 8300000, guid: c7ed9149ba8d0e144a87ee468dd34b34, type: 3}
+    category: 0
+    volume: 1
+    pitchVariation: 0
+    source: {fileID: 0}
+  - name: Laser
+    clip: {fileID: 8300000, guid: 4e8ea794d1b807f4e9cc53555d54e295, type: 3}
+    category: 1
+    volume: 0.6
+    pitchVariation: 0.1
+    source: {fileID: 0}
+  - name: Pickup
+    clip: {fileID: 8300000, guid: 61473de5a3d9c3546836100ec1840384, type: 3}
+    category: 1
+    volume: 0.8
+    pitchVariation: 0.05
+    source: {fileID: 0}
+  - name: GameOver
+    clip: {fileID: 8300000, guid: 4d7fe4df30a1dd34d9da94617b8fec0d, type: 3}
+    category: 1
+    volume: 1
+    pitchVariation: 0
+    source: {fileID: 0}
+  - name: ShieldUp
+    clip: {fileID: 8300000, guid: 8f57c4a0f6300fa4696809e1faab8664, type: 3}
+    category: 1
+    volume: 0.8
+    pitchVariation: 0
+    source: {fileID: 0}
+  - name: ShieldDown
+    clip: {fileID: 8300000, guid: 6abbd202565039f45943d29e7165237a, type: 3}
+    category: 1
+    volume: 0.8
+    pitchVariation: 0
+    source: {fileID: 0}
+  - name: Explosion
+    clip: {fileID: 8300000, guid: 65cf7968e9ecc4245adfb25ce40ae909, type: 3}
+    category: 1
+    volume: 0.7
+    pitchVariation: 0.15
+    source: {fileID: 0}
+  backgroundMusic: Music
+  masterVolume: 1
+  musicVolume: 0.5
+  effectsVolume: 0.8
+  muteKey: 109

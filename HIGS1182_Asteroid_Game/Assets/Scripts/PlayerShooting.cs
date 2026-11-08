@@ -20,9 +20,12 @@ public class PlayerShooting : MonoBehaviour
     [SerializeField] private int damage = 1;
 
     private Camera cam;
+    private AnimationController animationController;
 
     private void Awake()
     {
+        animationController = GetComponent<AnimationController>();
+
         if (shootingPoint == null)
         {
             shootingPoint = transform.Find("ShootingPoint");
@@ -56,12 +59,18 @@ public class PlayerShooting : MonoBehaviour
         Debug.DrawRay(origin, direction * range, Color.red, 0.2f);
 
         FireLaser(origin, direction);
+
+        if (animationController != null)
+        {
+            animationController.PlayShoot();
+        }
     }
 
     private void FireLaser(Vector3 origin, Vector3 direction)
     {
         Projectile laser = Instantiate(laserPrefab, origin, Quaternion.LookRotation(direction));
         laser.Launch(direction, range, damage, targetLayers);
+        AudioManager.PlaySound(SoundNames.Laser);
 
         Debug.Log("Laser fired.");
     }

@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -12,6 +13,10 @@ public class GameManager : MonoBehaviour
     [Header("High Score")]
     [Tooltip("Used by MainMenuScene and GameOverScene.")]
     [SerializeField] private TMP_Text highScoreText;
+
+    [Header("Settings")]
+    [Tooltip("Only used by MainMenuScene. Controls the master volume and is wired up in code.")]
+    [SerializeField] private Slider volumeSlider;
 
     private static int score;
     private static int wave = 1;
@@ -32,7 +37,22 @@ public class GameManager : MonoBehaviour
         }
 
         ShowHighScore();
+        SetUpVolumeSlider();
     }
+
+    private void SetUpVolumeSlider()
+    {
+        if (volumeSlider == null)
+        {
+            return;
+        }
+
+        // Set the starting value before listening, so opening the menu doesn't re-save the volume.
+        volumeSlider.SetValueWithoutNotify(AudioManager.MasterVolume);
+        volumeSlider.onValueChanged.AddListener(SetVolume);
+    }
+
+    public void SetVolume(float volume) => AudioManager.SetMasterVolume(volume);
 
     private void ShowHighScore()
     {

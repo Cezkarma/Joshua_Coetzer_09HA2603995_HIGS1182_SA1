@@ -30,7 +30,15 @@ public class PlayerController : MonoBehaviour
     [Tooltip("Adds a ThirdPersonCamera to the main camera at runtime if it does not already have one.")]
     [SerializeField] private bool autoSetUpCamera = true;
 
+    [Header("Death")]
+    [Tooltip("Seconds to wait for the death animation before ending the run anyway, in case its Animation Event never fires.")]
+    [SerializeField] private float deathFallbackDelay = 3f;
+
     private Rigidbody rb;
+    private AnimationController animationController;
+    private PlayerShooting shooting;
+    private bool isDead;
+    private string deathCause;
     private float yaw;
     private float pitch;
     private float roll;
@@ -43,6 +51,8 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        animationController = GetComponent<AnimationController>();
+        shooting = GetComponent<PlayerShooting>();
 
         rb.useGravity = false;
         rb.constraints = RigidbodyConstraints.FreezeRotation;
@@ -63,19 +73,52 @@ public class PlayerController : MonoBehaviour
         {
             SetUpCamera();
         }
+
+        if (animationController != null)
+        {
+            animationController.DeathAnimationFinished += EndRunAfterDeath;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (animationController != null)
+        {
+            animationController.DeathAnimationFinished -= EndRunAfterDeath;
+        }
     }
 
     private void Update()
     {
+        if (isDead)
+        {
+            return;
+        }
+
         HandleCursorLock();
         HandleLook();
         ReadThrustInput();
         UpdateBank();
+        UpdateAnimation();
     }
 
     private void FixedUpdate()
     {
+        if (isDead)
+        {
+            rb.linearVelocity = Vector3.zero;
+            return;
+        }
+
         MovePlayer();
+    }
+
+    private void UpdateAnimation()
+    {
+        if (animationController != null)
+        {
+            animationController.SetThrusting(thrustInput.sqrMagnitude > 0f);
+        }
     }
 
     private void MovePlayer()
@@ -159,6 +202,11 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        if (isDead)
+        {
+            return;
+        }
+
         GameObject other = collision.gameObject;
 
         if (other.CompareTag(GameTags.Asteroid))
@@ -203,8 +251,31 @@ public class PlayerController : MonoBehaviour
 
     private void Die(string cause)
     {
+        isDead = true;
+        deathCause = cause;
+        thrustInput = Vector3.zero;
         Debug.Log($"Game lost: {cause}.");
-        GameManager.EndRun($"You lost! {cause}.");
+        AudioManager.PlaySound(SoundNames.GameOver);
+
+        if (shooting != null)
+        {
+            shooting.enabled = false;
+        }
+
+        if (animationController == null)
+        {
+            EndRunAfterDeath();
+            return;
+        }
+
+        // The run normally ends when the death clip's Animation Event fires; this is the safety net.
+        animationController.PlayDeath();
+        Invoke(nameof(EndRunAfterDeath), deathFallbackDelay);
+    }
+
+    private void EndRunAfterDeath()
+    {
+        GameManager.EndRun($"You lost! {deathCause}.");
     }
 
     private void OnValidate()

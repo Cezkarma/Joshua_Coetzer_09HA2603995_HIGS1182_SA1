@@ -131,6 +131,7 @@ public class PowerUpManager : MonoBehaviour
         shieldTimeLeft = shieldDuration;
         SetShieldVisual(true);
         RefreshStatusText();
+        AudioManager.PlaySound(SoundNames.ShieldUp);
 
         Debug.Log(wasActive ? "Power-up collected: Energy shield recharged." : $"Power-up collected: Energy shield active for {shieldDuration}s.");
         HUDManager.ShowMessage(wasActive ? "Shield recharged" : "Energy Shield activated!", shieldColour);
@@ -152,6 +153,7 @@ public class PowerUpManager : MonoBehaviour
         shieldTimeLeft = 0f;
         SetShieldVisual(false);
         RefreshStatusText();
+        AudioManager.PlaySound(SoundNames.ShieldDown);
 
         Debug.Log($"Energy shield down: {reason}");
         HUDManager.ShowMessage(reason, shieldColour);
